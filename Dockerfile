@@ -1,4 +1,4 @@
-FROM ubuntu:utopic
+FROM ubuntu:14.04
 
 RUN apt-get update && apt-get install -y \
 		build-essential	\
@@ -9,10 +9,13 @@ RUN apt-get update && apt-get install -y \
 		protobuf-compiler \
 		python-minimal \
 		libaio-dev \
-		iptables
+		iptables \
+        asciidoc \
+        libtool
 
 COPY . /criu
 WORKDIR /criu
 
-RUN make clean && make -j $(nproc)
-RUN make -j $(nproc) -C test ZDTM_ARGS="-C -x static/rtc -x mountpoint -x static/cgroup02 -x tcp6 -x tcpbuf6"
+RUN make -j $(nproc) && make install
+
+ENTRYPOINT ["criu"]
